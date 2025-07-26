@@ -48,9 +48,24 @@ services:
                 - '${DB_USERNAME}'
             retries: 3
             timeout: 5s
+    pgadmin:
+        image: dpage/pgadmin4
+        ports:
+            - '${FORWARD_PGADMIN_PORT:-8080}:80' # ホストの8080ポートをpgAdminの80ポートにマッピング
+        environment:
+            PGADMIN_DEFAULT_EMAIL: '${PGADMIN_EMAIL:-pgadmin@example.com}' # pgAdminのログインメールアドレス
+            PGADMIN_DEFAULT_PASSWORD: '${PGADMIN_PASSWORD:-secret}' # pgAdminのログインパスワード
+        volumes:
+            - 'sail-pgadmin:/var/lib/pgadmin' # pgAdminのデータを永続化
+        networks:
+            - sail
+        depends_on:
+            - pgsql # pgsqlサービスが起動してからpgAdminを起動
 networks:
     sail:
         driver: bridge
 volumes:
     sail-pgsql:
+        driver: local
+    sail-pgadmin:
         driver: local
