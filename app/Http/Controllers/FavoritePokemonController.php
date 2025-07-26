@@ -28,7 +28,7 @@ class FavoritePokemonController extends Controller
         // dd($favoritePokemons); // ★ ここで dd() を使って内容を確認！
 
         // 最終的にはJSONレスポンスを返す
-        return view('favorites.index',compact('favoritePokemons'));
+        return response()->json($favoritePokemons);
     }
 
     // ★★★ 既存のstoreメソッド（お気に入り追加） ★★★
