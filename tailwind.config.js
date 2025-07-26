@@ -15,7 +15,6 @@ export default {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },
-            // ★★★ ここにcolorsプロパティを追加します ★★★
             colors: {
                 normal: '#A8A77A',
                 fire: '#EE8130',
