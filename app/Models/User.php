@@ -45,4 +45,12 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+        /**
+     * Get the favorite pokemons for the user.
+     */
+    public function favoritePokemons()
+    {
+        return $this->hasMany(FavoritePokemon::class);
+    }
 }
