@@ -23,8 +23,7 @@ return new class extends Migration
             // お気に入り登録日時と更新日時を自動で記録
             $table->timestamps();
             // user_id と pokemon_pokeapi_id の組み合わせがユニークであることを保証し、複合主キーとする
-            // これにより、同じユーザーが同じポケモンを複数回お気に入り登録することを防ぐ
-            $table->primary(['user_id', 'pokemon_pokeapi_id']); 
+            $table->primary(['user_id', 'pokemon_pokeapi_id']);
         });
     }
 
