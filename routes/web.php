@@ -3,7 +3,8 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PokemonController; // ★ この行を追加
-use App\Http\Controllers\Api\FavoritePokemonController; // ★ APIコントローラーも必要なのでそのまま残すか追加
+use App\Http\Controllers\FavoritePokemonController; // ★ APIコントローラーも必要なのでそのまま残すか追加
+use App\Models\FavoritePokemon;
 
 Route::get('/', function () {
     return view('welcome');
@@ -21,6 +22,9 @@ Route::middleware('auth')->group(function () {
 // ★ ポケモン関連のWebルーティングを追加 (認証済みユーザーのみアクセス可能)
     Route::get('/pokemons', [PokemonController::class, 'index'])->name('pokemons.index');
     Route::get('/pokemons/{id}', [PokemonController::class, 'show'])->name('pokemons.show');
+
+    // ★ ポケモンのお気に入りのルーティング
+    Route::resource('/favorites',FavoritePokemonController::class);
 });
 
 require __DIR__.'/auth.php';
