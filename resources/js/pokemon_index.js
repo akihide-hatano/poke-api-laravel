@@ -17,12 +17,12 @@ document.addEventListener('DOMContentLoaded', async function() {
     // ポケモンカードを生成する関数
     function createPokemonCard(pokemon) {
         // タイプは今はシンプルに最初のものだけ。もしなければ'unknown'
-        const type = pokemon.types && pokemon.types.length > 0 ? pokemon.types[0] : 'unknown'; 
+        const type = pokemon.types && pokemon.types.length > 0 ? pokemon.types[0] : 'unknown';
         const bgColorClass = `bg-${type}`; // Tailwind CSSのカスタムカラーを使用
         // お気に入りボタンはHTMLには残すが、JSの機能は外す
         // data-pokemon-id だけは、詳細ページ遷移で使うので残す
         return `
-            <div class="pokemon-card bg-white rounded-lg shadow-md overflow-hidden relative ${bgColorClass} bg-opacity-70 p-4 flex flex-col items-center justify-center cursor-pointer" data-pokemon-id="${pokemon.id}">
+            <div class="pokemon-card rounded-lg shadow-md overflow-hidden relative ${bgColorClass} bg-opacity-70 p-4 flex flex-col items-center justify-center cursor-pointer" data-pokemon-id="${pokemon.id}">
                 <button class="favorite-toggle-btn absolute top-2 right-2 text-2xl text-gray-300">
                     ♡
                 </button>
