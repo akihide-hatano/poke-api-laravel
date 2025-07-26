@@ -11,13 +11,24 @@ class FavoritePokemonController extends Controller
     // ★★★ 新しく追加または編集するメソッド ★★★
     public function index()
     {
-        // 認証済みのユーザーのお気に入りポケモンのみを取得
-        // user_id順に並べ替え、必要であればページネーションを追加
-        $favoritePokemons = Auth::user()->favoritePokemons()
-                                 ->orderBy('pokemon_pokeapi_id') // ID順にソート（任意）
-                                 ->get(); // または ->paginate(20);
+        // ログインユーザーが取得できているか確認
+        $user = Auth::user();
+        if (!$user) {
+            // ユーザーがログインしていない場合
+            // dd('ユーザーがログインしていません！'); // デバッグ用
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+        $favoritePokemonsRelation = $user->favoritePokemons();
+        // 実際にデータを取得
+        $favoritePokemons = $favoritePokemonsRelation
+                                 ->orderBy('pokemon_pokeapi_id')
+                                 ->get();
 
-        return response()->json($favoritePokemons);
+        // 取得したお気に入りポケモンのコレクションの内容を確認（デバッグ用）
+        // dd($favoritePokemons); // ★ ここで dd() を使って内容を確認！
+
+        // 最終的にはJSONレスポンスを返す
+        return view('favorites.index',compact('favoritePokemons'));
     }
 
     // ★★★ 既存のstoreメソッド（お気に入り追加） ★★★
