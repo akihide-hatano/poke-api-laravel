@@ -11,7 +11,7 @@
                 <div class="p-6 text-gray-900">
                     {{-- ポケモンリストが描画される場所 --}}
                     <div id="favoritePokemonList" class="pokemon-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                        <p>お気に入りのポケモンをロード中...</p>
+                        <p>お気に入りのポケモンをロード中...</p> {{-- JSで置き換えられる初期メッセージ --}}
                     </div>
                     {{-- ページネーションが必要ならここに div を追加 --}}
                     <div id="favoritePagination" class="flex justify-center mt-6"></div>
@@ -20,8 +20,6 @@
         </div>
     </div>
 
-    {{-- 作成するJavaScriptファイルを読み込む --}}
-    @push('scripts')
-        <script src="{{ asset('js/favorite_pokemons_index.js') }}"></script>
-    @endpush
+    {{-- ★JavaScriptファイルを読み込む（再び追加）★ --}}
+    @vite('resources/js/favorite_pokemons_index.js')
 </x-app-layout>
