@@ -1,6 +1,7 @@
 // resources/js/favorite_pokemons_index.js
 
 const POKEMON_API_BASE_URL = 'https://pokeapi.co/api/v2/pokemon/';
+const LARAVEL_API_FAVORITES_IDS_URL = '/api/favorite-pokemon-ids';
 const favoritePokemonListDiv = document.getElementById('favoritePokemonList');
 
 function displayMessage(message, isError = false) {
@@ -23,12 +24,11 @@ async function fetchPokemonData(pokemonId) {
         };
     } catch (error) {
         console.error(`Error fetching Pokemon ID ${pokemonId}:`, error);
-        return null; // エラー時はnullを返す
+        return null;
     }
 }
 
 function createFavoritePokemonCard(pokemon) {
-    // 受け取るデータはPokeAPIから取得したデータになる
     return `
         <div class="pokemon-card bg-white rounded-lg shadow-md overflow-hidden p-4 flex flex-col items-center">
             <h2 class="text-2xl font-bold mb-2 capitalize">${pokemon.name}</h2>
@@ -42,26 +42,39 @@ function createFavoritePokemonCard(pokemon) {
 async function fetchAndDisplayFavoritePokemons() {
     displayMessage('お気に入りのポケモンをロード中...');
 
+    // ★ CSRFトークンを取得 ★
+    // Laravelが自動で<meta name="csrf-token" content="...">をHTMLに埋め込んでいるはずです
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
     try {
-        // Laravelのバックエンドからお気に入りのポケモンIDのリストを取得
-        const response = await fetch('/favorites');
+        const response = await fetch(LARAVEL_API_FAVORITES_IDS_URL, {
+            headers: {
+                'Accept': 'application/json',
+                // ★ CSRFトークンをヘッダーに含める ★
+                'X-CSRF-TOKEN': csrfToken,
+            }
+        });
 
         if (!response.ok) {
-            const errorText = await response.text(); // JSONではない可能性も考慮しtextで取得
-            throw new Error(`お気に入りIDリスト取得失敗: ${response.status} - ${errorText.substring(0, 100)}...`);
+            if (response.status === 401) {
+                displayMessage('お気に入りの表示にはログインが必要です。', true);
+            } else {
+                const errorText = await response.text();
+                throw new Error(`お気に入りIDリスト取得失敗: ${response.status} - ${errorText.substring(0, 100)}...`);
+            }
+            return;
         }
 
-        const favoritePokemonIds = await response.json(); // ★ ここでJSONとしてIDリストを取得
+        const favoritePokemonIds = await response.json();
 
         if (favoritePokemonIds.length > 0) {
-            // Promise.all を使って全てのポケモンデータを並行して取得
             const pokemonDataPromises = favoritePokemonIds.map(id => fetchPokemonData(id));
-            const pokemons = (await Promise.all(pokemonDataPromises)).filter(p => p !== null); // 失敗したリクエストを除外
+            const pokemons = (await Promise.all(pokemonDataPromises)).filter(p => p !== null);
 
             if (pokemons.length > 0) {
                 favoritePokemonListDiv.innerHTML = pokemons.map(createFavoritePokemonCard).join('');
             } else {
-                displayMessage('お気に入りのポケモンが見つかりませんでした。'); // APIからの取得に失敗した場合
+                displayMessage('お気に入りのポケモンが見つかりませんでした。');
             }
         } else {
             displayMessage('お気に入りのポケモンはまだいません。');
@@ -73,10 +86,6 @@ async function fetchAndDisplayFavoritePokemons() {
     }
 }
 
-// ページロード時に実行
 document.addEventListener('DOMContentLoaded', fetchAndDisplayFavoritePokemons);
-// あるいは、Laravelのapp.jsの後に読み込む場合は window.onload でも良い
-// window.onload = fetchAndDisplayFavoritePokemons;
 
-console.log('favorite_pokemons_index.js が読み込まれました！'); // デバッグ用
-// alert('JavaScriptが読み込まれました！'); // 念のためアラートも追加して確認
+console.log('favorite_pokemons_index.js が読み込まれました！');

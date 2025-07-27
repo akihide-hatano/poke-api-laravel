@@ -20,6 +20,6 @@
         </div>
     </div>
 
-    {{-- ★JavaScriptファイルを読み込む（再び追加）★ --}}
+    {{-- ★JavaScriptファイルを読み込む（このまま維持）★ --}}
     @vite('resources/js/favorite_pokemons_index.js')
 </x-app-layout>

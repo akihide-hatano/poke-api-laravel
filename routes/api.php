@@ -1,8 +1,9 @@
+// routes/api.php
 <?php
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\FavoritePokemonController; // ★この行を追加してください★
+use App\Http\Controllers\FavoritePokemonController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,10 +16,13 @@ use App\Http\Controllers\FavoritePokemonController; // ★この行を追加し�
 |
 */
 
+// このルートはデフォルトで残しておいてください
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-// ★ JavaScriptが呼び出す新しいAPIルートを追加 ★
-// このルートは、お気に入りポケモンのIDリストをJSONで返します。
-Route::middleware('auth:sanctum')->get('/favorite-pokemon-ids', [FavoritePokemonController::class, 'getFavoritePokemonIds']);
+// ★ この行から 'auth:sanctum' ミドルウェアを一時的に削除 ★
+Route::get('/favorite-pokemon-ids', [FavoritePokemonController::class, 'getFavoritePokemonIds']);
+
+// もし以前に /favorites のルートがここにあったら、削除またはコメントアウトしてください。
+// 例: Route::get('/favorites', [FavoritePokemonController::class, 'index']); // これは削除
